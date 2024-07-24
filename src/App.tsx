@@ -1,11 +1,26 @@
+
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 
-function App() {
+import Sidebar from './components/Sidebar';
+import ManageBooks from './pages/ManageBooks';
+import AddBook from './pages/AddBook';
+import EditBook from './pages/EditBook';
+const App = () => {
   return (
-    <div>
-      <p>Hearhere is here!!</p>
-    </div>
+    <Router>
+      <div className="flex">
+        <Sidebar />
+        <div className="flex-grow p-6">
+          <Routes>
+            <Route path="/manage-books" element={<ManageBooks />} />
+            <Route path="/add-book" element={<AddBook />} />
+            <Route path="/edit-book/:id" element={<EditBook />} />
+          </Routes>
+        </div>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
