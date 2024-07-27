@@ -125,11 +125,7 @@ const Sidebar = () => {
   return (
     <div className="w-64 h-screen bg-white border-r flex flex-col">
       <div className="p-4 border-b">
-        <img
-          src="../public/img/Logo.png"
-          alt="Hear Here"
-          className="h-8 w-auto"
-        />
+        <img src="/img/Logo.png" alt="Hear Here" className="h-8 w-auto" />
       </div>
       <nav className="flex flex-col p-4 space-y-4">
         {navLinks.map((link, index) => (
