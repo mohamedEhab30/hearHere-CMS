@@ -1,0 +1,21 @@
+.my-checbox{
+    position: relative;
+    width: 15px;
+    height: 15px;
+    border: 2px solid #cbcbcb;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.my-checbox.checked{
+    background-color: #fd672945;
+    border-color: #fd6729;
+    color: #fd6729;
+}
+
+.my-checbox svg{
+    width: 10px;
+    height: 10px;
+}

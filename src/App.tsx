@@ -1,11 +1,9 @@
-
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import './App.css';
-
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import ManageBooks from './pages/ManageBooks';
 import AddBook from './pages/AddBook';
 import EditBook from './pages/EditBook';
+
 const App = () => {
   return (
     <Router>
