@@ -1,5 +1,5 @@
-import { ReactNode, useState } from 'react';
-import { FiBarChart2, FiHome, FiLogOut } from 'react-icons/fi';
+import { useState } from 'react';
+import { FiBarChart2, FiHome, FiLogOut, FiMenu, FiX } from 'react-icons/fi';
 import { IoMdBook } from 'react-icons/io';
 import {
   IoChevronDownOutline,
@@ -8,10 +8,8 @@ import {
   IoLayersOutline,
 } from 'react-icons/io5';
 import { CiFlag1 } from 'react-icons/ci';
-
 import { RxAvatar } from 'react-icons/rx';
 import { LuUsers } from 'react-icons/lu';
-
 import { Link } from 'react-router-dom';
 
 interface SubMenu {
@@ -21,8 +19,9 @@ interface SubMenu {
 
 interface NavLink {
   title: string;
-  icon: ReactNode;
-  subMenu: SubMenu[];
+  icon: React.ReactNode;
+  subMenu?: SubMenu[];
+  link?: string;
 }
 
 const navLinks: NavLink[] = [
@@ -74,6 +73,16 @@ const navLinks: NavLink[] = [
       { link: '/add-user', title: 'Add User' },
     ],
   },
+  {
+    title: 'Support',
+    icon: <RxAvatar />,
+    link: '/support',
+  },
+  {
+    title: 'Settings',
+    icon: <IoSettingsOutline />,
+    link: '/settings',
+  },
 ];
 
 const NavLinkItem = ({
@@ -85,6 +94,8 @@ const NavLinkItem = ({
   activeLink: string;
   setActiveLink: (title: string) => void;
 }) => {
+  const isActive = activeLink === link.title;
+
   return (
     <div>
       <p
@@ -92,17 +103,19 @@ const NavLinkItem = ({
         onClick={() => setActiveLink(link.title)}
       >
         {link.icon}
-        <Link to="/"> {link.title}</Link>
-        <span className="block ml-auto">
-          {activeLink === link.title ? (
-            <IoChevronUpOutline />
-          ) : (
-            <IoChevronDownOutline />
-          )}
-        </span>
+        {link.link ? (
+          <Link to={link.link}> {link.title}</Link>
+        ) : (
+          <span>{link.title}</span>
+        )}
+        {link.subMenu && (
+          <span className="ml-auto">
+            {isActive ? <IoChevronUpOutline /> : <IoChevronDownOutline />}
+          </span>
+        )}
       </p>
 
-      {activeLink === link.title && (
+      {isActive && link.subMenu && (
         <div className="flex flex-col pl-4 space-y-1">
           {link.subMenu.map((item) => (
             <Link
@@ -121,45 +134,81 @@ const NavLinkItem = ({
 
 const Sidebar = () => {
   const [activeLink, setActiveLink] = useState('Home');
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleToggle = () => setIsOpen(!isOpen);
+
+  const handleClose = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (e.target instanceof Element && !e.target.closest('.sidebar')) {
+      setIsOpen(false);
+    }
+  };
 
   return (
-    <div className="w-64 h-screen bg-white border-r flex flex-col">
-      <div className="p-4 border-b">
-        <img src="/img/Logo.png" alt="Hear Here" className="h-8 w-auto" />
-      </div>
-      <nav className="flex flex-col p-4 space-y-4">
-        {navLinks.map((link, index) => (
-          <NavLinkItem
-            key={index}
-            link={link}
-            activeLink={activeLink}
-            setActiveLink={setActiveLink}
+    <div className="flex h-screen" onClick={handleClose}>
+      <div
+        className={`sidebar w-64 bg-white border-r flex flex-col md:relative fixed md:translate-x-0 transform ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        } transition-transform duration-300 ease-in-out z-50`}
+      >
+        <div className="p-4 border-b flex items-center justify-between">
+          <img
+            src="../public/img/Logo.png"
+            alt="Hear Here"
+            className="h-8 w-auto"
           />
-        ))}
-      </nav>
+          <button className="md:hidden" onClick={handleToggle}>
+            <FiX size={24} />
+          </button>
+        </div>
+        <nav className="flex flex-col p-4 space-y-4">
+          {navLinks.slice(0, -2).map((link) => (
+            <NavLinkItem
+              key={link.title}
+              link={link}
+              activeLink={activeLink}
+              setActiveLink={setActiveLink}
+            />
+          ))}
+        </nav>
 
-      <div className="other-services p-4 mt-auto">
-        <p className="flex items-center gap-2 mb-2">
-          <RxAvatar /> Support
-        </p>
-        <p className="flex items-center gap-2">
-          <IoSettingsOutline /> Settings
-        </p>
+        <div className="other-services p-4 mt-auto">
+          {navLinks.slice(-2).map((link) => (
+            <NavLinkItem
+              key={link.title}
+              link={link}
+              activeLink={activeLink}
+              setActiveLink={setActiveLink}
+            />
+          ))}
+        </div>
+
+        <div className="auth p-4 border-t flex items-center gap-4 relative">
+          <img
+            className="w-10 rounded-full"
+            src="/img/avatar.png"
+            alt="User Avatar"
+          />
+          <div>
+            <p className="font-semibold">Rawan Attia</p>
+            <p className="text-gray-600">rawan@iqraa'ly.com</p>
+          </div>
+          <span className="absolute top-4 right-4">
+            <FiLogOut />
+          </span>
+        </div>
       </div>
 
-      <div className="auth p-4 border-t flex items-center gap-4 relative">
-        <img
-          className="w-10 rounded-full"
-          src="/img/avatar.png"
-          alt="User Avatar"
-        />
-        <div>
-          <p className="font-semibold">Rawan Attia</p>
-          <p className="text-gray-600">rawan@iqraa'ly.com</p>
-        </div>
-        <span className="absolute top-4 right-4">
-          <FiLogOut />
-        </span>
+      <div className={`flex-1 md:ml-50 ${isOpen ? 'overflow-hidden' : ''}`}>
+        <button
+          className="md:hidden p-4"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleToggle();
+          }}
+        >
+          {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+        </button>
       </div>
     </div>
   );
